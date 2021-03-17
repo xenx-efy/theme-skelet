@@ -1,14 +1,14 @@
 name: bedrock
 recipe: wordpress
 config:
-  php: '7.2'
+  php: '7.4'
   via: nginx
   webroot: web
   database: mariadb
   xdebug: true
 services:
   node:
-    type: node
+    type: node:14
     globals:
       gulp-cli: "latest"
       bower: "latest"
@@ -17,4 +17,8 @@ services:
 
 tooling:
   npm:
+    service: node
+  npx:
+    service: node
+  node:
     service: node
