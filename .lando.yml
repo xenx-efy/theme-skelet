@@ -6,3 +6,15 @@ config:
   webroot: web
   database: mariadb
   xdebug: true
+services:
+  node:
+    type: node
+    globals:
+      gulp-cli: "latest"
+      bower: "latest"
+      webpack: "latest"
+      npm: "latest"
+
+tooling:
+  npm:
+    service: node
