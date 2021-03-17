@@ -21,6 +21,23 @@ If you need the node in project, you can use `lando node`, `lando npm`, `lando n
 
 For other questions please refer to lando documentation.
 
+## Xdebug
+
+- `lando xdebug <mode>` - load [Xdebug](https://xdebug.org/) in the selected, run it for enable xdebugger;
+[mode(s)](https://xdebug.org/docs/all_settings#mode)
+- In mapping configuration you should set servername and hostname as `appserver`, port `80` 
+and set mapping on web directory as `/app/web`;
+- For debugger listener set `9003` port.
+
+> if debugger don't work, try to install and use [`Xdebug helper`](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc)
+ extension for your browser.
+>
+> Or make sure it is not blocked by the firewall.
+
+**Source [link](https://github.com/lando/lando/issues/1668#issuecomment-772829423) on setup**
+
 ### Sources
 - [timber theme](https://timber.github.io/docs/)
 - [bedrock](https://roots.io/bedrock/)
+
+

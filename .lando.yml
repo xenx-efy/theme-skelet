@@ -5,7 +5,9 @@ config:
   via: nginx
   webroot: web
   database: mariadb
-  xdebug: true
+  xdebug: off
+  config:
+    php: .lando/php.ini
 services:
   node:
     type: node:14
@@ -14,7 +16,11 @@ services:
       bower: "latest"
       webpack: "latest"
       npm: "latest"
-
+  appserver:
+    overrides:
+      environment:
+        XDEBUG_MODE:
+        PHP_IDE_CONFIG: "serverName=appserver"
 tooling:
   npm:
     service: node
@@ -22,3 +28,8 @@ tooling:
     service: node
   node:
     service: node
+  xdebug:
+    description: Loads Xdebug in the selected mode.
+    cmd:
+      - appserver: .lando/xdebug.sh
+    user: root
