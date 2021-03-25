@@ -1,86 +1,111 @@
 <?php
 
 namespace App;
-//
-//use Timber\Theme;
 
-use Timber\Theme;
+use Timber\Timber;
 
-function my_mario_block_category( $categories, $post ) {
+/**
+ * Register custom blocks category for acf fields
+ */
+add_filter( 'block_categories', 'App\\add_custom_blocks_categories', 10, 2 );
+function add_custom_blocks_categories( $categories, $post ) {
 	return array_merge(
 		$categories,
 		array(
 			array(
-				'slug'  => 'bts-blocks',
-				'title' => __( 'Custom BTS Blocks', 'bts-blocks' ),
+				'slug'  => 'custom-blocks',
+				'title' => __( 'Custom Blocks', 'bts-blocks' ),
 			),
 		)
 	);
 }
 
-add_filter( 'block_categories', 'App\my_mario_block_category', 10, 2 );
-
-function my_acf_block_render_callback( $block ) {
-
-	// convert name ("acf/testimonial") into path friendly slug ("testimonial")
-	$slug = str_replace( 'acf/', '', $block['name'] );
-	echo $slug;
-	echo file_exists( get_theme_file_path( "views/blocks/" . $slug . ".twig" ) );
-
-	// include a template part from within the "template-parts/block" folder
-	if ( file_exists( get_theme_file_path( "views/blocks/" . $slug . ".twig" ) ) ) {
-		include( get_theme_file_path( "views/blocks/" . $slug . ".twig" ) );
-	}
-}
-
-//function register_acf_block_types() {
-//
-//}
-//
-//// Check if function exists and hook into setup.
-//if ( function_exists( 'acf_register_block_type' ) ) {
-//	add_action( 'acf/init', 'register_acf_block_types' );
-//}
-
-function my_acf_load_post_type_field_choices( $field ) {
-	$field['choices'] = get_post_types( [ 'public' => true ] );
-
-	return $field;
-}
-
-add_filter( 'acf/load_field/name=post_type', 'my_acf_load_post_type_field_choices' );
-
 /**
- * Create blocks based on templates found in Sage's "views/blocks" directory
+ * Create blocks based on templates found in "views/blocks" directory
  */
-add_action( 'acf/init', function () {
+add_action( 'acf/init', 'App\\register_acf_blocks' );
+function register_acf_blocks() {
 
-	// Check whether ACF exists before continuing
-	$dir = get_template_directory() . '/views/blocks';
+	$blocks_dir = get_template_directory() . '/views/blocks';
 
-
-	// Sanity check whether the directory we're iterating over exists first
-	if ( ! file_exists( $dir ) ) {
+	if ( ! file_exists( $blocks_dir ) ) {
 		return;
 	}
 
-	// Iterate over the directories provided and look for templates
-	$template_directory = new \DirectoryIterator( $dir );
+	$template_directory = new \DirectoryIterator( $blocks_dir );
 
 	foreach ( $template_directory as $template ) {
 		if ( function_exists( 'acf_register_block_type' ) && ! $template->isDot() && ! $template->isDir() ) {
 
-			$block_name = filenameToString( $template->getFilename() );
+			$filename    = $template->getFilename();
+			$block_name  = remove_file_extension( $filename );
+			$block_title = filename_to_string( $filename );
 
 			acf_register_block_type( array(
 				'name'            => $block_name,
-				'title'           => __( ucfirst( $block_name ) ),
-				'description'     => __( 'A custom testimonial block.' ),
-				'render_template' => get_theme_file_path(__FILE__) . '',
-				'category'        => 'formatting',
+				'title'           => __( ucfirst( $block_title ) ),
+				'description'     => __( "A custom {$block_title} block." ),
+				'render_callback' => 'App\\render_twig_blocks',
+				'category'        => 'custom-blocks',
 				'icon'            => 'admin-comments',
 				'keywords'        => array( 'testimonial', 'quote' ),
 			) );
 		}
 	}
+}
+
+/**
+ * ACF render callback function
+ *
+ * @param $block
+ */
+function render_twig_blocks( $block ) {
+
+	$slug = str_replace( 'acf/', '', $block['name'] );
+	if ( file_exists( get_theme_file_path( "views/blocks/" . $slug . ".twig" ) ) ) {
+		$context = Timber::context();
+		// Store block values.
+		$context['block'] = $block;
+		// Store field values.
+		$context['fields'] = get_fields();
+
+		Timber::render( get_theme_file_path( "views/blocks/" . $slug . ".twig" ), $context );
+	}
+}
+
+/**
+ * Create theme settings page
+ */
+if ( function_exists( 'acf_add_options_page' ) ) {
+	acf_add_options_page( array(
+		'page_title' => 'Theme General Settings',
+		'menu_title' => 'Theme Settings',
+		'menu_slug'  => 'theme-general-settings',
+		'capability' => 'edit_posts',
+		'redirect'   => false
+	) );
+
+	acf_add_options_sub_page( array(
+		'page_title'  => 'Theme Header Settings',
+		'menu_title'  => 'Header',
+		'parent_slug' => 'theme-general-settings',
+	) );
+}
+
+/**
+ * Set acf json save path
+ */
+add_filter( 'acf/settings/save_json', function ( $path ) {
+	return get_theme_file_path( 'views/blocks/acf-json/' );
+}, 0 );
+
+/**
+ * Set acf json load path
+ */
+add_filter( 'acf/settings/load_json', function ( $paths ) {
+	unset( $paths[0] );
+
+	$paths[] = get_theme_file_path( 'views/blocks/acf-json/' );
+
+	return $paths;
 } );

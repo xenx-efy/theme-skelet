@@ -21,3 +21,11 @@ function asset_path( string $path = null ): string {
 
 	return $base_path . $path;
 }
+
+function filename_to_string( string $filename ) {
+	return trim( preg_replace( '/\.twig|[^A-z0-9]|_/', ' ', $filename ) );
+}
+
+function remove_file_extension( $filename ) {
+	return preg_replace( '/\.[^.]+$/', '', $filename );
+}

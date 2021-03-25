@@ -23,8 +23,8 @@ For other questions please refer to lando documentation.
 
 ## Xdebug
 
-- `lando xdebug <mode>` - load [Xdebug](https://xdebug.org/) in the selected, run it for enable xdebugger;
-[mode(s)](https://xdebug.org/docs/all_settings#mode)
+- `lando xdebug <mode>` - load [Xdebug](https://xdebug.org/) in the selected, run it for enable xdebug
+[mode(s)](https://xdebug.org/docs/all_settings#mode);
 - In mapping configuration you should set servername and hostname as `appserver`, port `80` 
 and set mapping on web directory as `/app/web`;
 - For debugger listener set `9003` port.

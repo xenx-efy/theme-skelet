@@ -23,10 +23,11 @@ class StarterSite extends Site
         parent::__construct();
     }
 
-    /** This is where you add some context
-     *
-     * @param string $context context['this'] Being the Twig's {{ this }}.
-     */
+	/** This is where you add some context
+	 *
+	 * @param string $context context['this'] Being the Twig's {{ this }}.
+	 *
+	 */
     public function add_to_context($context)
     {
         $context['foo']   = 'bar';

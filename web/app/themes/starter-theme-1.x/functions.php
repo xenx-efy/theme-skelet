@@ -10,7 +10,6 @@
 
 
 use App\Controllers\StarterSite;
-use Timber\Theme;
 
 $composer_autoload = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( $composer_autoload ) ) {
@@ -43,7 +42,7 @@ if ( ! class_exists( 'Timber' ) ) {
 /**
  * Sets the directories (inside your theme) to find .twig files
  */
-Timber::$dirname = array( 'templates', 'views' );
+Timber::$dirname = array( 'views/templates', 'views' );
 
 /**
  * By default, Timber does NOT autoescape values. Want to enable Twig's autoescape?
@@ -51,13 +50,16 @@ Timber::$dirname = array( 'templates', 'views' );
  */
 Timber::$autoescape = false;
 
+/**
+ * Load app folder files
+ */
 array_map( static function ( $file ) {
 	$file = "app/{$file}.php";
 	if ( ! locate_template( $file, true, true ) ) {
 		add_action(
 			'admin_notices',
 			function () use ( $file ) {
-				echo '<div class="error">' . sprintf( __( 'Error locating <code>%s</code> for inclusion.', 'sage' ), $file ) . '</p></div>';
+				echo '<div class="error">' . sprintf( __( 'Error locating <code>%s</code> for inclusion.', 'timber' ), $file ) . '</p></div>';
 			}
 		);
 	}
@@ -65,8 +67,3 @@ array_map( static function ( $file ) {
 
 
 new StarterSite();
-
-
-function filenameToString( string $filename ) {
-	return preg_replace( '/\.twig|[^A-z0-9]/', ' ', $filename );
-}
