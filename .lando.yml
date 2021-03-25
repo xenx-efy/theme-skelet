@@ -17,6 +17,10 @@ services:
       webpack: "latest"
       npm: "latest"
   appserver:
+    run:
+      - composer install
+      - composer install -d ./web/app/themes/starter-theme-1.x
+      - cp .env.example .env
     overrides:
       environment:
         XDEBUG_MODE:
