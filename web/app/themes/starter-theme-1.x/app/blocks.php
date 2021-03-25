@@ -96,6 +96,11 @@ if ( function_exists( 'acf_add_options_page' ) ) {
  * Set acf json save path
  */
 add_filter( 'acf/settings/save_json', function ( $path ) {
+	$save_path = get_theme_file_path( 'views/blocks/acf-json/' );
+	if ( ! file_exists( $save_path ) && ! mkdir( $concurrentDirectory = get_theme_file_path( 'views/blocks/acf-json/' ) ) && ! is_dir( $concurrentDirectory ) ) {
+		throw new \RuntimeException( sprintf( 'Directory "%s" was not created', $concurrentDirectory ) );
+	}
+
 	return get_theme_file_path( 'views/blocks/acf-json/' );
 }, 0 );
 
