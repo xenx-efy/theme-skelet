@@ -10,6 +10,8 @@
 
 
 use App\Controllers\StarterSite;
+use Timber\Theme;
+use function App\asset_path;
 
 $composer_autoload = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( $composer_autoload ) ) {
@@ -63,7 +65,10 @@ array_map( static function ( $file ) {
 			}
 		);
 	}
-}, [ 'assets-setup', 'helpers', 'filters', 'post-types', 'blocks' ] );
+}, [ 'helpers', 'assets-setup', 'filters', 'post-types', 'blocks' ] );
 
 
 new StarterSite();
+
+
+

@@ -12,12 +12,7 @@ use Timber\Site;
  * @return string
  */
 function asset_path( string $path = null ): string {
-	if ( $path ) {
-		$base_path = $path;
-	} else {
-		$site      = new Site();
-		$base_path = $site->link();
-	}
+    $base_path = trailingslashit(get_stylesheet_directory_uri() . '/dist');
 
 	return $base_path . $path;
 }
